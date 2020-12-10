@@ -1,0 +1,20 @@
+{
+  "list":"List<{{$name}}>",
+  "dict":"{{$name}}",
+  "bool":"bool",
+  "int":"int",
+  "float":"double",
+  "str":"String",
+  "datetime":"DateTime",
+  "none":"dynamic"
+}
+
+@JsonSerializable()
+class {{$name}} {
+    {{$items[$type $key;][
+    ]}}
+
+    {{$name}}({{$items[this.$key][,]}});
+    factory {{$name}}.fromJson(Map<String, dynamic> json) => _${{$name}}FromJson(json);
+    Map<String, dynamic> toJson() => _${{$name}}ToJson(this);
+}

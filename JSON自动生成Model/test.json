@@ -1,0 +1,47 @@
+{
+    "issues": [
+        {
+            "id": 1,
+            "project": {
+                "id": 1,
+                "name": "项目A"
+            },
+            "tracker": {
+                "id": 2,
+                "name": "Feature"
+            },
+            "status": {
+                "id": 1,
+                "name": "New"
+            },
+            "priority": {
+                "id": 2,
+                "name": "Normal"
+            },
+            "author": {
+                "id": 5,
+                "name": "xx fan"
+            },
+            "subject": "第一个功能",
+            "description": "用来测试的第一个功能",
+            "start_date": "2020-12-05",
+            "due_date": null,
+            "done_ratio": 0,
+            "is_private": false,
+            "estimated_hours": null,
+            "custom_fields": [
+                {
+                    "id": 1,
+                    "name": "我的字段A",
+                    "value": null
+                }
+            ],
+            "created_on": "2020-12-05T03:50:58Z",
+            "updated_on": "2020-12-05T03:50:58Z",
+            "closed_on": null
+        }
+    ],
+    "total_count": 1,
+    "offset": 0,
+    "limit": 25
+}
