@@ -3,7 +3,7 @@
 import sys, getopt, os
 import json
 import re
-# from en import singular
+from pattern.text.en import singularize
 
 # 对象的名称，转为首字母大写的驼峰
 def objNameOfDict(name):
@@ -22,7 +22,7 @@ def objNameOfDict(name):
     return "".join(result)
 # 列表对应对象的名称
 def objNameOfList(name):
-    new_name = name#singular(name)
+    new_name = singularize(name)
     return objNameOfDict(new_name)
 # "?\d{4}([-/]\d{1,2}){2}([T ]\d{1,2}():\d{1,2}){2}Z?)?":DateTime
 # "\d{1,2}():\d{1,2}){2}":DateTime
