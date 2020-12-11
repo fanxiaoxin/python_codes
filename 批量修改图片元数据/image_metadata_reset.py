@@ -3,6 +3,8 @@
 
 import sys, getopt, os
 import re
+# 元数据字段文档：https://www.exiv2.org/metadata.html
+# https://github.com/LeoHsiao1/pyexiv2
 import pyexiv2
 
 # 修改单个图片元数据
@@ -51,11 +53,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hci:e:p:x:")
     except getopt.GetoptError:
-        print("接受参数为: -i 目标目录 -c(清除原数据) -e exif元数据(https://www.exiv2.org/metadata.html)，不能带空格如label%我是标签%name%我是名字 -p iptc元数据，同exif -x xmp元数据，同exif")
+        print("接受参数为: -i 目标目录 -c(清除原数据) -e exif元数据(https://www.exiv2.org/metadata.html)，不能带空格如Xmp.dc.description%我是描述%Xmp.dc.creator%我是作者 -p iptc元数据，同exif -x xmp元数据，同exif")
         sys.exit(2)
     for opt, arg in opts:
         if opt == "-h":
-            print("接受参数为: -i 目标目录 -c(清除原数据) -e exif元数据(https://www.exiv2.org/metadata.html)，不能带空格如label%我是标签%name%我是名字 -p iptc元数据，同exif -x xmp元数据，同exif")
+            print("接受参数为: -i 目标目录 -c(清除原数据) -e exif元数据(https://www.exiv2.org/metadata.html)，不能带空格如Xmp.dc.description%我是描述%Xmp.dc.creator%我是作者 -p iptc元数据，同exif -x xmp元数据，同exif")
             sys.exit()
         elif opt == "-i":
             inputfile = arg

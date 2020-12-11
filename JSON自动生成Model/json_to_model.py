@@ -9,6 +9,7 @@ import re
 # nltk.download('wordnet')
 # nltk.download('wordnet_ic')
 # nltk.download('sentiwordnet')
+# https://github.com/clips/pattern
 from pattern.text.en import singularize
 
 # 对象的名称，转为首字母大写的驼峰
