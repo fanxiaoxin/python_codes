@@ -3,6 +3,12 @@
 import sys, getopt, os
 import json
 import re
+# pip3 install pattern
+# python3
+# import nltk
+# nltk.download('wordnet')
+# nltk.download('wordnet_ic')
+# nltk.download('sentiwordnet')
 from pattern.text.en import singularize
 
 # 对象的名称，转为首字母大写的驼峰
