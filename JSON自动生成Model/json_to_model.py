@@ -22,7 +22,14 @@ def objNameOfDict(name):
     return "".join(result)
 # 列表对应对象的名称
 def objNameOfList(name):
-    new_name = singularize(name)
+    new_name = name
+    #如果是list则截断就好
+    if name.endswith("List"):
+        new_name = name[0: len(name) - 4]
+    elif name.endswith("_list") or name.endswith("-list"):
+        new_name = name[0: len(name) - 5]
+    else:#否则复数要改为单数
+        new_name = singularize(name)
     return objNameOfDict(new_name)
 # "?\d{4}([-/]\d{1,2}){2}([T ]\d{1,2}():\d{1,2}){2}Z?)?":DateTime
 # "\d{1,2}():\d{1,2}){2}":DateTime
