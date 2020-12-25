@@ -55,9 +55,13 @@ def replace_identifiers(path, target_path, regexs, identifier_map):
             def replace(matched):
                 target = matched.group("target")
                 if target in identifier_map:
-                    return identifier_map[target]
+                    target = identifier_map[target]
+                    target_pos = matched.span("target")
+                    all = matched.group(0)
+                    pos = matched.span(0)
+                    return all[0:target_pos[0] - pos[0]] + target + all[target_pos[1] - pos[0]:pos[1] - pos[0]]
                 else:
-                    return target
+                    return matched.group(0)
             for regex in regexs:
                 content = regex.subn(replace, content)[0]
             # 替换完写回去
@@ -156,7 +160,7 @@ class CodeMixer:
         genericTypeRegex = re.compile(r"\b(?:class|struct|enum)\s+(?:[A-Za-z_][A-Za-z0-9_]*)\s*<\s*(?P<target>[A-Za-z_][A-Za-z0-9_]*)\s*>\s*[^\{]*\{")
         ids = set()
         # 文件名也要一起换掉
-        fileNames = []
+        # fileNames = []
         # 递归列出当前目录下的文件并执行对应的操作
         for (root, dirs, files) in os.walk(self.projectPath):
             # Pods、R.swift不动
@@ -165,9 +169,9 @@ class CodeMixer:
             for file in files:
                 if re.match(r'.*\.swift', file) and not file == "R.generated.swift":
                     collect_identifiers(os.path.join(root, file), [classRegex, genericTypeRegex], ids)
-                    fileNames.append(os.path.splitext(file)[0])
+                    # fileNames.append(os.path.splitext(file)[0])
         self.buildMapping(ids)
-        self.buildMapping(fileNames)
+        # self.buildMapping(fileNames)
         print("关键字映射：", self.keywordMapping)
         print("收集到的类(结构)名及映射：", self.identifierMapping)
         # 生成完导出方便备份以后同一个项目可使用同一份字典
@@ -179,18 +183,18 @@ class CodeMixer:
         # 开始替换关键字
         # 修改标识符
         identifierRegexs = [re.compile(r"\b(?P<target>[A-Za-z_][A-Za-z0-9_+]*)\b")]
-         # 替换找到的字符
-        def replace(matched):
-            target = matched.group("target")
-            if target in self.identifierMapping:
-                return self.identifierMapping[target]
+        path_name_regex = re.compile("\b[A-Za-z_][A-Za-z0-9_+]*\b")
+        # 替换找到的字符
+        def replace_path_name(path_name):
+            if path_name in self.identifierMapping:
+                return self.identifierMapping[path_name]
             else:
-                return target
+                return path_name
         for (root, dirs, files) in os.walk(self.projectPath):
             # 跳过Pods目录
             if root.startswith(self.projectPath + "/Pods"):
                 continue
-            target_root_path = identifierRegexs[0].subn(replace, root[len(self.projectPath):len(root)])[0]
+            target_root_path = path_name_regex.subn(replace_path_name, root[len(self.projectPath):len(root)])[0]
             # target_root_dirs = root[len(self.projectPath):len(root)].split('/')
             # if len(target_root_dirs) > 0 :
             #     for i in range(len(target_root_dirs)):
@@ -202,8 +206,8 @@ class CodeMixer:
             for file_name in files:
                 target_file = file_name
                 file_name_s = os.path.splitext(file_name)
-                if file_name_s[0] in self.identifierMapping:
-                    target_file = self.identifierMapping[file_name_s[0]] + file_name_s[1]
+                file_name_s0 = path_name_regex.subn(replace_path_name, file_name_s[0])[0]
+                target_file = file_name_s0 + file_name_s[1]
                 path = os.path.join(root, file_name)
                 target_path = os.path.join(target_root, target_file)
                 if re.match(r'.*\.(?:swift|xib|storyboard|pbxproj)', file_name) and not file_name == "R.generated.swift":
