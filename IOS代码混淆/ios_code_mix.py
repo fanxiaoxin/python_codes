@@ -543,8 +543,9 @@ class IosProjectMixer:
         """
         ignore_path = r'\bPods\b|\.bundle\b|\.framework\b'
 
+        image_xmp_creator = self.identifier_mapping.get_mapping_identifier("Xmp.dc.creator")
         class_mix = ClassNameMixManager(self.project_path, self.identifier_mapping, [ignore_path, r'\bR.generated.swift$'])
-        image_mix = ImageMixManager(self.project_path, self.identifier_mapping, {"Xmp.dc.creator":"Test"}, ignore_path)
+        image_mix = ImageMixManager(self.project_path, self.identifier_mapping, {"Xmp.dc.creator": image_xmp_creator}, ignore_path)
         project_mix = ProjectNameMixManager(self.project_path, self.identifier_mapping, ignore_path)
 
         mixers = [class_mix, image_mix, project_mix]
