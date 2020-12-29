@@ -4,6 +4,9 @@
 import sys, getopt, os
 import re
 from typing import AnyStr, Union, Optional, Tuple
+from shutil import copytree
+import random
+import json
 # 随机单词
 # pip3 install RandomWords
 from random_words import RandomWords
@@ -11,9 +14,6 @@ from random_words import RandomWords
 # https://github.com/LeoHsiao1/pyexiv2
 # pip3 install pyexiv2
 import pyexiv2
-import random
-import json
-from shutil import copytree
 
 class IdeneitiferPattern:
     """
