@@ -579,11 +579,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "ht:k:i:")
     except getopt.GetoptError:
-        print("接受参数为: -t 项目目录 -k 关键字映射文件 -i 标识符映射文件(json格式)")
+        print("接受参数为: -t 项目目录(必选) -k 关键字映射文件(可选: json格式) -i 标识符映射文件(可选: json格式)")
         sys.exit(2)
     for opt, arg in opts:
         if opt == "-h":
-            print("接受参数为: -t 项目目录 -k 关键字映射文件 -i 标识符映射文件(json格式)")
+            print("接受参数为: -t 项目目录(必选) -k 关键字映射文件(可选: json格式) -i 标识符映射文件(可选: json格式)")
             sys.exit()
         elif opt == "-t":
             inputFile = arg
@@ -591,6 +591,9 @@ def main(argv):
             keywordMappingFile = arg
         elif opt == "-i":
             identifierMappingFile = arg
+    if not inputFile:
+        print("接受参数为: -t 项目目录(必选) -k 关键字映射文件(可选: json格式) -i 标识符映射文件(可选: json格式)")
+        sys.exit()
     my_path = os.path.abspath(os.path.dirname(__file__))
     inputFile = os.path.join(my_path, inputFile)
     if keywordMappingFile:
