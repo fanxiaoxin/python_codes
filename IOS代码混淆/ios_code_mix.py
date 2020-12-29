@@ -1,22 +1,19 @@
 #!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 
-from ast import walk
 import sys, getopt, os
 import re
-from typing import Any, AnyStr, KeysView, Mapping, Pattern, Union, Optional, Tuple
+from typing import AnyStr, Union, Optional, Tuple
 # 随机单词
 # pip3 install RandomWords
 from random_words import RandomWords
 # 元数据字段文档：https://www.exiv2.org/metadata.html
 # https://github.com/LeoHsiao1/pyexiv2
+# pip3 install pyexiv2
 import pyexiv2
 import random
-# # 读写properties文件
-# # pip3 install sine.properties
-# import sine.properties
 import json
-from shutil import copytree, copyfile, ignore_patterns
+from shutil import copytree
 
 class IdeneitiferPattern:
     """
@@ -543,7 +540,7 @@ class IosProjectMixer:
         """
         ignore_path = r'\bPods\b|\.bundle\b|\.framework\b'
 
-        image_xmp_creator = self.identifier_mapping.get_mapping_identifier("Xmp.dc.creator")
+        image_xmp_creator = self.identifier_mapping.get_mapping_identifier("ImageXmpCreator")
         class_mix = ClassNameMixManager(self.project_path, self.identifier_mapping, [ignore_path, r'\bR.generated.swift$'])
         image_mix = ImageMixManager(self.project_path, self.identifier_mapping, {"Xmp.dc.creator": image_xmp_creator}, ignore_path)
         project_mix = ProjectNameMixManager(self.project_path, self.identifier_mapping, ignore_path)
