@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["-t","/Users/jy_new/项目/IOS/Helloworld/Helloworld"]
+            "args": ["-t","/Users/jy_new/项目/IOS/Projects/package_frontend_ios"]
         }
     ]
 }
