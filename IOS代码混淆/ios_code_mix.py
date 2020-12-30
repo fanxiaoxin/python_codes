@@ -395,7 +395,6 @@ class FileMixManager:
                         new_file_path = self.root_path + self.replace_path(path)
                         self.mix_file(file_path, new_file_path)
                             
-
 class ClassNameMixManager(FileMixManager):
     """
     类名混淆管理：负责管理类名的混淆方案
@@ -408,11 +407,28 @@ class ClassNameMixManager(FileMixManager):
         """
         config = FileMixConfig()
         config.collect_path_patterns = [FilePattern(r".*\.swift$", [IdeneitiferPattern(r"(?P<target>[^/]*)\.swift", "target")])]
-        config.collect_content_patterns = [FilePattern(r".*\.swift$", [IdeneitiferPattern(r"\b(?:class|struct|enum)\s+(?P<target>[A-Za-z_][A-Za-z0-9_]*)(?:\s*<\s*\w*(?:\s*,\s*\w*)*\s*>)?(?:\s*\:\s*\w*(?:\s*,\s*\w*)*)?\s*\{", "target")])]
+        config.collect_content_patterns = [FilePattern(r".*\.swift$", [IdeneitiferPattern(r"\b(?:class|struct|enum|protocol)\s+(?P<target>[A-Za-z_][A-Za-z0-9_]*)(?:\s*<[^>]+>)?(?:\s*\:\s*\w*(?:\s*,\s*\w*)*)?(?:\s*where[^\{]+)?\s*\{", "target")])]
         config.replace_path_patterns = [FilePattern(r".*\.swift$", [IdeneitiferPattern(r"(?P<target>[^/]*)\.swift", "target")])]
         config.replace_content_patterns = [FilePattern(r'.*\.(?:swift|xib|storyboard)$', [IdeneitiferPattern(r"\b[A-Za-z_][A-Za-z0-9_+]*\b")]),FilePattern(r'.*\.pbxproj$', [IdeneitiferPattern(r"\b(?P<target>[A-Za-z_][A-Za-z0-9_+ \.]*).(?:swift|xib|storyboard)\b","target")])]
         super().__init__(root_path, identifier_mapping, config, ignore_path_regexs)
-    
+''' 方法名无法只靠正则筛选，因为有继承协议的方法，单用正则无法筛出该方法是否是继承了非自定义的协议
+class FunctionNameMixManager(FileMixManager):
+    """
+    函数名混淆管理：负责管理函数名的混淆方案
+    """
+    def __init__(self, root_path: str, identifier_mapping: IdentifierMappingManager, ignore_path_regexs: Union[list, AnyStr] = None):
+        """
+        @root_path 项目根目录
+        @identifier_mapping 标识符映射管理器
+        @ignore_path_regexs 要忽略的路径正则
+        """
+        config = FileMixConfig()
+        config.collect_path_patterns = None
+        config.collect_content_patterns = [FilePattern(r".*\.swift$", [IdeneitiferPattern(r"[;\n]\s*(?:class\s+|open\s+|public\s+|private\s+|fileprivate\s+|internal\s+)*func\s+(?P<target>[A-Za-z_][A-Za-z0-9_]*)(?:\s*<[^>]+>)?\s*\([^\)]*\)[^\{]*\{", "target")])]
+        config.replace_path_patterns = None
+        config.replace_content_patterns = None # 因为ClassName混淆时已经替换过所有标识符，所以此处不再重复检查，若不使用类名混淆则此处需要使用类名的替换规则
+        super().__init__(root_path, identifier_mapping, config, ignore_path_regexs)
+'''
 class ImageMixManager(FileMixManager):
     """
     图片混淆管理：负责管理图片的混淆方案
@@ -428,7 +444,7 @@ class ImageMixManager(FileMixManager):
         config.collect_path_patterns = [FilePattern(r".*\.xcassets(?:/.*)/.*\.imageset/Contents.json$", [IdeneitiferPattern(r".*\.xcassets(?:/.*)/(?P<target>.*)\.imageset", "target")])]
         config.collect_content_patterns = None
         config.replace_path_patterns = [FilePattern(r".*\.xcassets(?:/.*)/.*\.imageset/.*$", [IdeneitiferPattern(r".*\.xcassets(?:/.*)/(?P<target>.*)\.imageset", "target")])]
-        config.replace_content_patterns = None
+        config.replace_content_patterns = None # 因为ClassName混淆时已经替换过所有标识符，所以此处不再重复检查，若不使用类名混淆则此处需要使用类名的替换规则
         super().__init__(root_path, identifier_mapping, config, ignore_path_regexs)
         self.image_xmp = image_xmp
 
@@ -539,10 +555,14 @@ class IosProjectMixer:
         混淆目标项目
         """
         ignore_path = r'\bPods\b|\.bundle\b|\.framework\b'
+        rswift_ignore_path = r'\bR.generated.swift$'
 
+        # 混淆类名
+        class_mix = ClassNameMixManager(self.project_path, self.identifier_mapping, [ignore_path, rswift_ignore_path])
+        # 混淆图片名及元数据
         image_xmp_creator = self.identifier_mapping.get_mapping_identifier("ImageXmpCreator")
-        class_mix = ClassNameMixManager(self.project_path, self.identifier_mapping, [ignore_path, r'\bR.generated.swift$'])
         image_mix = ImageMixManager(self.project_path, self.identifier_mapping, {"Xmp.dc.creator": image_xmp_creator}, ignore_path)
+        # 混淆项目名
         project_mix = ProjectNameMixManager(self.project_path, self.identifier_mapping, ignore_path)
 
         mixers = [class_mix, image_mix, project_mix]
